@@ -1,62 +1,60 @@
 <script setup lang="ts">
-  import {ref} from 'vue'
-
-  import Modal from './Modal.vue'
   import Day from './Day.vue'
-
-  const open = ref(false)
-  const currentDay = ref(new Date().getDate())
-  const currentMonth = ref(new Date().getMonth())
-  const daysOfMonth = Array.from({length: 31}, (_,i) => i+1)
-  const daysOfWeek = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-
-  const openModal = () => open.value = true
-  const closeModal = () => open.value = false
-
+  import Modal from './Modal.vue'
+  import { useReminderStore } from '../store/useRemidersStore'
+  import AddReminderButton from './AddReminderButton.vue'
+  import { storeToRefs } from "pinia"
+  const store = useReminderStore()
+  const {
+    iso,
+    isToday, 
+    nextMonth, 
+    prevMonth, 
+  } = store
+  const { 
+    month,
+    year,
+    lastDay,
+    weekDays,
+    monthName,
+    reminders, 
+  } = storeToRefs(store)
 </script>
 
 <template>
   <section class="calendar" aria-label="Calendario mensual">
     <header class="cal-header">
-      <h2>{{ months[currentMonth] }}</h2>
+      <button class="nav" aria-label="prev month" @click="prevMonth">‹</button>
+      <h2>{{ monthName }} {{ year }}</h2>
+      <button class="nav" aria-label="next month" @click="nextMonth">›</button>
     </header>
     <ol class="weekdays" aria-hidden="true">
-      <li v-for="day in daysOfWeek">
+      <li v-for="day in weekDays">
         {{ day }}
       </li>
     </ol>
-    <ol class="days" style="--start: 6">
-      <Day 
-          v-for="day in daysOfMonth"
-          :isToday="day === currentDay"
+    <ol class="days" :style="{'--start': 6}">
+        <Day
+          v-for="day in lastDay"
+          :isToday="isToday(day)"
+          :key="day"
         >
-          {{ day }}
+          <div class="num">{{ day }}</div>
+          <div class="reminders">
+            <div 
+              class="chip"
+              :key="reminder.text"
+              :title="reminder.text"
+              v-for="reminder in reminders[iso(year, month, day)]"
+              :style="{ backgroundColor: reminder.color }" 
+            >
+              {{ reminder.text }}
+            </div>
+          </div>
       </Day>
     </ol>
-    <button
-      id="fabAdd" 
-      class="fab" 
-      aria-label="Agregar recordatorio" 
-      title="Agregar recordatorio" 
-      @click="openModal"
-    >
-      +
-    </button>
-    <Modal :open="open" :onClose="closeModal" />
+    <AddReminderButton/>
+    <Modal/>
   </section>
 </template>
 
@@ -72,6 +70,8 @@
     --card: #f8fafc;
     --today: #2563eb;
     --select: #fbcacc;
+    --chip: #2563eb;        /* color de chips */
+    --chip-fg: #fff;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -81,30 +81,41 @@
       --card: #131a2e;
       --ring: #60a5fa22;
       --today: #60a5fa;
+      --brand: #2563eb;
     }
   }
 
   .calendar {
     position: relative;
-    max-width: 520px;
+    max-width: 620px;
     margin: 1.5rem auto;
-    padding: 1rem 1rem 4rem;
+    padding: 1rem 1rem 4.5rem;
     background: var(--bg);
     color: var(--fg);
     border-radius: var(--radius);
     box-shadow: 0 8px 24px var(--ring);
     border: 1px solid #ffffff10;
   }
-
   .cal-header {
-    display: flex; align-items: center; justify-content: center;
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    gap: .5rem;
     margin-bottom: .75rem;
   }
   .cal-header h2 {
-    font: 600 1.2rem/1.2 system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+    text-align: center;
+    font: 700 1.2rem/1.2 system-ui, -apple-system, Segoe UI, Inter, Roboto, sans-serif;
     margin: 0;
   }
-
+  .nav {
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid #ffffff20;
+    background: var(--card);
+    cursor: pointer;
+    font-size: 18px;
+  }
   .weekdays, .days {
     list-style: none;
     margin: 0;
@@ -113,7 +124,6 @@
     grid-template-columns: repeat(7, 1fr);
     gap: var(--gap);
   }
-
   .weekdays {
     margin-bottom: .5rem;
     color: var(--muted);
@@ -124,27 +134,27 @@
   .weekdays > li {
     text-align: center;
   }
-
   .days {
     counter-reset: day;
   }
   .days > .day:first-child {
     grid-column: var(--start);
   }
-
-  .fab {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    width: 52px;
-    height: 52px;
-    border-radius: 999px;
-    border: none;
-    background: var(--today);
-    color: white;
-    font: 700 28px/52px Inter, system-ui;
-    box-shadow: 0 4px 16px var(--ring);
-    cursor: pointer;
+  .num { font: 700 .95rem/1.1 Inter, ui-sans-serif, system-ui; }
+  .reminders {
+    margin-top: .45rem;
+    display: grid;
+    gap: .3rem;
   }
-  .fab:focus-visible { outline: 3px solid var(--ring); }
+  .chip {
+    display: inline-block;
+    font: 600 .72rem/1.2 Inter, ui-sans-serif, system-ui;
+    /* background: var(--chip); */
+    color: var(--chip-fg);
+    padding: .25rem .45rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>

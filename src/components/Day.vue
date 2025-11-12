@@ -1,6 +1,6 @@
 <template>
     <li :class="['day', {'is-today': isToday}]">
-        <slot></slot>
+      <slot></slot>
     </li>
 </template>
 
@@ -19,7 +19,7 @@
     background: var(--card);
     border-radius: calc(var(--radius) - 6px);
     padding: .6rem;
-    min-height: 68px;
+    min-height: 90px;
     display: grid;
     grid-template-rows: auto 1fr;
     align-content: start;
@@ -30,9 +30,7 @@
   .day:hover{
     background: var(--select);
   }
-  .day::before {
-    content: attr(data-label, ""); /* fallback vacío si quisieras otro contenido */
-  }
+
   .day {
     font: 600 .95rem/1.1 Inter, ui-sans-serif, system-ui;
   }

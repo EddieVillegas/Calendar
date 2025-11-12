@@ -1,39 +1,59 @@
 <script setup lang="ts">
+    import { ref } from 'vue';
+    import { useReminderStore } from '../store/useRemidersStore';
+   
+    const date = ref("")
+    const color = ref("")
+    const city = ref("")
+    const text = ref("")
+    
+    const store = useReminderStore()
 
-    type Props = {
-        open: boolean
-        onClose: () => void
+    const { 
+        closeModal,
+        saveReminder,
+    } = store
+    
+    const onSubmit = () => {
+        saveReminder({
+            text: text.value,
+            city: city.value,
+            color: color.value,
+            date: date.value
+        })
+        text.value = ""
+        city.value = ""
+        color.value = ""
+        date.value = ""
+        closeModal()
     }
-
-    const { open, onClose } = defineProps<Props>()
 </script>
 
 <template>
-    <dialog id="reminderDialog" :open="open">
-        <form id="reminderForm" method="dialog">
+    <dialog id="reminderDialog" :open="store.open">
+        <form id="reminderForm" @submit.prevent="onSubmit">
             <header class="dlg-header">
                 <strong>New reminder</strong>
-                <button type="button" id="dlgClose" aria-label="Cerrar" @click="onClose">✕</button>
+                <button type="button" id="dlgClose" aria-label="Cerrar" @click="closeModal">✕</button>
             </header>
             <label>
                 Date
-                <input type="date" id="remDate" required>
+                <input type="date" id="remDate" required v-model="date">
             </label>
             <label>
                 Text
-                <input type="text" id="remText" placeholder="Meeting, etc." required maxlength="30" autofocus>
+                <input type="text" id="remText" placeholder="Meeting, etc." required maxlength="30" autofocus v-model="text">
             </label>
             <label>
                 City
-                <input type="text" id="city" placeholder="City">
+                <input type="text" id="city" placeholder="City" v-model="city">
             </label>
             <label>
-                City
-                <input type="color" id="color">
+                <input type="color" id="color" v-model="color">
             </label>
             <menu class="dlg-actions">
                 <button type="reset">Limpiar</button>
-                <button type="submit" class="primary">Guardar</button>
+                <button type="submit" class="primary">Save</button>
             </menu>
         </form>
     </dialog>
