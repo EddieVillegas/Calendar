@@ -18,7 +18,7 @@ export const useReminderStore = defineStore('reminders', () => {
     const nextMonth = () => {
         let m = month.value +1
         let y = year.value
-        if(m > 12){
+        if(m > 12) {
             m = 1;
             y++
         }
@@ -28,7 +28,7 @@ export const useReminderStore = defineStore('reminders', () => {
     const prevMonth = () => {
         let m = month.value - 1
         let y = year.value
-        if(m < 1){
+        if(m < 1) {
             m = 12
             y--
         }
@@ -68,7 +68,13 @@ export const useReminderStore = defineStore('reminders', () => {
         return `${y}-${mm}-${dd}`;
     }
 
-    const openModal = () => open.value = true
+    const openModal = (
+        time?: string, 
+        reminder?: Reminder
+    ) => {
+        open.value = true
+    }
+    
     const closeModal = () => open.value = false
 
     onMounted(() => {

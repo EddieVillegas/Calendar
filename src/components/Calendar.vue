@@ -9,7 +9,8 @@
     iso,
     isToday, 
     nextMonth, 
-    prevMonth, 
+    prevMonth,
+    openModal, 
   } = store
   const { 
     month,
@@ -36,22 +37,10 @@
     <ol class="days" :style="{'--start': 6}">
         <Day
           v-for="day in lastDay"
-          :isToday="isToday(day)"
+          :day="day"
           :key="day"
-        >
-          <div class="num">{{ day }}</div>
-          <div class="reminders">
-            <div 
-              class="chip"
-              :key="reminder.text"
-              :title="reminder.text"
-              v-for="reminder in reminders[iso(year, month, day)]"
-              :style="{ backgroundColor: reminder.color }" 
-            >
-              {{ reminder.text }}
-            </div>
-          </div>
-      </Day>
+          :isToday="isToday(day)"
+        />
     </ol>
     <AddReminderButton/>
     <Modal/>
@@ -139,22 +128,5 @@
   }
   .days > .day:first-child {
     grid-column: var(--start);
-  }
-  .num { font: 700 .95rem/1.1 Inter, ui-sans-serif, system-ui; }
-  .reminders {
-    margin-top: .45rem;
-    display: grid;
-    gap: .3rem;
-  }
-  .chip {
-    display: inline-block;
-    font: 600 .72rem/1.2 Inter, ui-sans-serif, system-ui;
-    /* background: var(--chip); */
-    color: var(--chip-fg);
-    padding: .25rem .45rem;
-    border-radius: 999px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 </style>

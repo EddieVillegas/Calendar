@@ -1,16 +1,36 @@
 <template>
-    <li :class="['day', {'is-today': isToday}]">
-      <slot></slot>
+    <li 
+      :class="['day', {'is-today': isToday}]"
+    >
+      <div class="num">{{ day }}</div>
+          <div class="reminders">
+            <div 
+              class="chip"
+              :key="reminder.text"
+              :title="reminder.text"
+              v-for="reminder in store.reminders[store.iso(store.year, store.month, day)]"
+              :style="{ backgroundColor: reminder.color }"
+              @click="openModal(iso(store.year, store.month, day), reminder)"
+            >
+              {{ reminder.text }}
+            </div>
+          </div>
     </li>
 </template>
 
 <script setup lang="ts">
+  import { useReminderStore } from '../store/useRemidersStore';
 
-    type Props = {
-        isToday: boolean
-    }
+  type Props = {
+    day: number
+    isToday: boolean
+  }
 
-    const { isToday } = defineProps<Props>()
+  const { day } = defineProps<Props>()
+
+  const store = useReminderStore()
+
+  const {openModal, iso} = store
 
 </script>
 
@@ -35,21 +55,30 @@
     font: 600 .95rem/1.1 Inter, ui-sans-serif, system-ui;
   }
   .day > * { font-weight: 500; }
-
-  /* Número arriba a la izquierda */
   .day::after {
     content: attr(data-day, "");
   }
-
-  /* Estilo “hoy” si lo marcas con una clase */
   .day.is-today {
     outline: 2px solid var(--today);
     outline-offset: 2px;
   }
-
-  /* Opcional: que las celdas conserven proporción en pantallas amplias */
+  .num { font: 700 .95rem/1.1 Inter, ui-sans-serif, system-ui; }
+  .reminders {
+    margin-top: .45rem;
+    display: grid;
+    gap: .3rem;
+  }
+  .chip {
+    display: inline-block;
+    font: 600 .72rem/1.2 Inter, ui-sans-serif, system-ui;
+    color: var(--chip-fg);
+    padding: .25rem .45rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   @media (min-width: 520px) {
     .day { aspect-ratio: 1; }
   }
-
 </style>

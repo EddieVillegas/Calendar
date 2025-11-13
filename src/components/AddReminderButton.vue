@@ -4,7 +4,7 @@
       class="fab" 
       aria-label="Agregar recordatorio" 
       title="Agregar recordatorio" 
-      @click="store.openModal"
+      @click.stop="store.openModal()"
     >
       +
     </button>
