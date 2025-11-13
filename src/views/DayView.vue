@@ -14,7 +14,18 @@
           <p>{{ r.text }}</p>
           <p>{{ r.date }}</p>
           <p>{{ r.city }}</p>
-          <small class="muted">ID: {{ r.id }}</small>
+          <p v-if="r.city" class="weather-line">
+            <span class="muted">Weather in {{ r.city }}: </span>
+            <span v-if="loadingWeatherByReminder[r.id]"> cargando…</span>
+            <span v-else-if="weatherErrorByReminder[r.id]" class="error">
+              {{ weatherErrorByReminder[r.id] }}
+            </span>
+            <span v-else-if="weatherByReminder[r.id]">
+              <strong>{{ Math.round(weatherByReminder[r.id]!.main.temp - KELVIN) }}°C</strong>
+              · {{ weatherByReminder[r.id]!.weather[0]?.description }}
+            </span>
+          </p>
+          <!-- <small class="muted">ID: {{ r.id }}</small> -->
         </div>
 
         <div class="actions">
@@ -24,25 +35,30 @@
       </li>
 
       <li v-if="!items.length" class="empty">
-        Sin recordatorios aún para este día.
+        There are no reminders yet
       </li>
     </ul>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, watch, reactive } from 'vue'
 import { useReminderStore } from '../store/useRemidersStore'
-import type { Reminders } from '../types'
+import type { Reminder, Reminders, Weather } from '../types'
+import { useLoadWeatherForCity } from '../composables/useLoadWeatherForCity'
 
+const KELVIN = 273.15
 const { list } = useReminderStore()
 
 type Props = {
   day: string
 }
-const {day: date} =defineProps<Props>()
+const {day: date} = defineProps<Props>()
 const items = computed<Reminders>(() => list(date))
-const edits = reactive<Record<string, { text: string; city: string; color: string }>>({})
+
+const weatherByReminder = reactive<Record<string, Weather | null>>({})
+const loadingWeatherByReminder = reactive<Record<string, boolean>>({})
+const weatherErrorByReminder = reactive<Record<string, string>>({})
 
 const friendlyDate = computed(() => {
   const [y, m, d] = date.split('-').map(Number)
@@ -54,6 +70,26 @@ const friendlyDate = computed(() => {
     day: 'numeric'
   })
 })
+
+const loadWeatherForReminder = async (reminder: Reminder) => {
+  if(!reminder.city) {
+    weatherByReminder[reminder.id] = null
+    weatherErrorByReminder[reminder.id] = ""
+    return
+  }
+  const { weather, isLoading, error } = await useLoadWeatherForCity(reminder.city)
+  if(!weather) weatherErrorByReminder[reminder.id] = "Error"
+  weatherByReminder[reminder.id] = weather
+  loadingWeatherByReminder[reminder.id] = isLoading
+  weatherErrorByReminder[reminder.id] = error
+}
+
+watch(items, val => {
+  val.forEach(loadWeatherForReminder)
+}, {
+  immediate: true
+})
+
 </script>
 
 <style scoped>
