@@ -1,16 +1,16 @@
 <template>
-    <li 
+    <li
       :class="['day', {'is-today': isToday}]"
+      @click="changePage(store.iso(store.year,store.month,day))"
     >
       <div class="num">{{ day }}</div>
           <div class="reminders">
-            <div 
+            <div
               class="chip"
               :key="reminder.text"
               :title="reminder.text"
-              v-for="reminder in store.reminders[store.iso(store.year, store.month, day)]"
+              v-for="reminder in store.reminders.map[store.iso(store.year, store.month, day)]"
               :style="{ backgroundColor: reminder.color }"
-              @click="openModal(iso(store.year, store.month, day), reminder)"
             >
               {{ reminder.text }}
             </div>
@@ -20,17 +20,22 @@
 
 <script setup lang="ts">
   import { useReminderStore } from '../store/useRemidersStore';
-
+  import { useRouter } from "vue-router"
+  
   type Props = {
     day: number
     isToday: boolean
   }
 
+  const router = useRouter()
+
   const { day } = defineProps<Props>()
 
   const store = useReminderStore()
 
-  const {openModal, iso} = store
+  const changePage = (date: string) => {
+    router.push({ name: "day", params: { day: date } })
+  }
 
 </script>
 

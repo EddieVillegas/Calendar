@@ -12,7 +12,7 @@
     const { 
         closeModal,
         saveReminder,
-    } = store
+    } = store   
     
     const onSubmit = () => {
         saveReminder({

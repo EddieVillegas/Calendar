@@ -32,7 +32,7 @@
     --card: #f8fafc;
     --today: #2563eb;
     --select: #fbcacc;
-    --chip: #2563eb;        /* color de chips */
+    --chip: #2563eb;
     --chip-fg: #fff;
   }
   @media (prefers-color-scheme: dark) {
@@ -46,7 +46,6 @@
       --brand: #2563eb;
     }
   }
-
   .calendar {
     position: relative;
     max-width: 620px;
@@ -65,21 +64,5 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: var(--gap);
-  }
-  .weekdays {
-    margin-bottom: .5rem;
-    color: var(--muted);
-    font: 600 .8rem/1 system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-  }
-  .weekdays > li {
-    text-align: center;
-  }
-  .days {
-    counter-reset: day;
-  }
-  .days > .day:first-child {
-    grid-column: var(--start);
   }
 </style>

@@ -1,20 +1,34 @@
 import { defineStore } from "pinia";
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, reactive } from "vue";
 import type { Reminder, Reminders } from "../types";
 
 type MapReminders = Record<string, Reminders>; 
+const LS_KEY = 'calendar_reminders';
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-export const useReminderStore = defineStore('reminders', () => {
-    
+export const useReminderStore = defineStore('reminders', () => {    
     const now = new Date();
     const open = ref(false)
     const year = ref(now.getFullYear());
     const month = ref(now.getMonth() + 1)
-    const remindersMap = ref<MapReminders>({})
+    const state = reactive<{map:MapReminders}>({map: {}})
     
     const monthName = computed(() => months[month.value - 1])
     const lastDay = computed(() => new Date(year.value, month.value,0).getDate())
     
+    const load = () => {
+        const rawData = localStorage.getItem(LS_KEY)
+        state.map = rawData ? JSON.parse(rawData) : {}
+    }
+
+    const save = () => {
+        localStorage.setItem(LS_KEY, JSON.stringify(state.map))
+    }
+
+    const list = (date: string): Reminders => {
+        return state.map[date] || []
+    }
+
     const nextMonth = () => {
         let m = month.value +1
         let y = year.value
@@ -35,15 +49,13 @@ export const useReminderStore = defineStore('reminders', () => {
         month.value = m
         year.value = y
     }
-    
-    const LS_KEY = 'calendar_reminders';
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const saveReminder = (
-        newReminder: Reminder
+        newReminder: Omit<Reminder, 'id'>
     ) => {
-        remindersMap.value[newReminder.date] ||= []
-        remindersMap.value[newReminder.date]?.push(newReminder)
+        state.map[newReminder.date] ||= []
+        const id = crypto.randomUUID()
+        state.map[newReminder.date]?.push({...newReminder, id })
     }
 
     const isToday = (
@@ -77,12 +89,11 @@ export const useReminderStore = defineStore('reminders', () => {
     const closeModal = () => open.value = false
 
     onMounted(() => {
-        const rawData = localStorage.getItem(LS_KEY)
-        remindersMap.value = rawData ? JSON.parse(rawData) : {}
+        load()
     })
 
-    watch(remindersMap, () => {
-        localStorage.setItem(LS_KEY, JSON.stringify(remindersMap.value))
+    watch(state.map, () => {
+        save()
     }, {
         deep: true
     })
@@ -90,8 +101,9 @@ export const useReminderStore = defineStore('reminders', () => {
     return {
         iso,
         year,
-        month,
         open,
+        list,
+        month,
         isToday,
         lastDay,
         monthName,
@@ -100,6 +112,6 @@ export const useReminderStore = defineStore('reminders', () => {
         openModal,
         closeModal,
         saveReminder,
-        reminders: remindersMap,
+        reminders: state,
     }
 })

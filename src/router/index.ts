@@ -1,6 +1,6 @@
 import { createRouter, createMemoryHistory } from "vue-router";
 import Calendar from '../components/Calendar.vue'
-import Day from "../views/Day.vue";
+import DayView from "../views/DayView.vue";
 
 const routes = [
     {
@@ -8,8 +8,10 @@ const routes = [
         component: Calendar
     },
     {
-        path: "/:id",
-        component: Day
+        path: "/:day",
+        name: "day",
+        component: DayView,
+        props: true
     }
 ]
 
