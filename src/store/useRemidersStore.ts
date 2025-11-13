@@ -37,7 +37,6 @@ export const useReminderStore = defineStore('reminders', () => {
     }
     
     const LS_KEY = 'calendar_reminders';
-    const weekDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     const saveReminder = (
@@ -95,7 +94,6 @@ export const useReminderStore = defineStore('reminders', () => {
         open,
         isToday,
         lastDay,
-        weekDays,
         monthName,
         nextMonth,
         prevMonth,

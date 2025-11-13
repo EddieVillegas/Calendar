@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Calendar from './components/Calendar.vue'
+  import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <Calendar />
+  <RouterView/>
 </template>

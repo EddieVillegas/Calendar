@@ -1,49 +1,22 @@
 <script setup lang="ts">
-  import Day from './Day.vue'
+  import Days from './Days.vue'
   import Modal from './Modal.vue'
-  import { useReminderStore } from '../store/useRemidersStore'
+  import Header from './Header.vue'
+  import WeekDays from './WeekDays.vue'
   import AddReminderButton from './AddReminderButton.vue'
-  import { storeToRefs } from "pinia"
+  import { useReminderStore } from '../store/useRemidersStore'
+
   const store = useReminderStore()
-  const {
-    iso,
-    isToday, 
-    nextMonth, 
-    prevMonth,
-    openModal, 
-  } = store
-  const { 
-    month,
-    year,
-    lastDay,
-    weekDays,
-    monthName,
-    reminders, 
-  } = storeToRefs(store)
+  const weekDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
 </script>
 
 <template>
   <section class="calendar" aria-label="Calendario mensual">
-    <header class="cal-header">
-      <button class="nav" aria-label="prev month" @click="prevMonth">‹</button>
-      <h2>{{ monthName }} {{ year }}</h2>
-      <button class="nav" aria-label="next month" @click="nextMonth">›</button>
-    </header>
-    <ol class="weekdays" aria-hidden="true">
-      <li v-for="day in weekDays">
-        {{ day }}
-      </li>
-    </ol>
-    <ol class="days" :style="{'--start': 6}">
-        <Day
-          v-for="day in lastDay"
-          :day="day"
-          :key="day"
-          :isToday="isToday(day)"
-        />
-    </ol>
+    <Header />
+    <WeekDays :week-days="weekDays"/>
+    <Days :is-today="store.isToday" :last-day="store.lastDay"/>
     <AddReminderButton/>
-    <Modal/>
+    <Modal />
   </section>
 </template>
 
@@ -84,26 +57,6 @@
     border-radius: var(--radius);
     box-shadow: 0 8px 24px var(--ring);
     border: 1px solid #ffffff10;
-  }
-  .cal-header {
-    display: grid;
-    grid-template-columns: 48px 1fr 48px;
-    align-items: center;
-    gap: .5rem;
-    margin-bottom: .75rem;
-  }
-  .cal-header h2 {
-    text-align: center;
-    font: 700 1.2rem/1.2 system-ui, -apple-system, Segoe UI, Inter, Roboto, sans-serif;
-    margin: 0;
-  }
-  .nav {
-    height: 36px;
-    border-radius: 10px;
-    border: 1px solid #ffffff20;
-    background: var(--card);
-    cursor: pointer;
-    font-size: 18px;
   }
   .weekdays, .days {
     list-style: none;
