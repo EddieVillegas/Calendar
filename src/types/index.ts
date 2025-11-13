@@ -7,3 +7,9 @@ export type Reminder = {
 }
 
 export type Reminders = Reminder[]
+
+export type CityWeather = {
+  temp: number
+  description: string
+  icon: string
+}
