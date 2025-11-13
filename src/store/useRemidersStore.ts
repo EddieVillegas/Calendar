@@ -92,7 +92,7 @@ export const useReminderStore = defineStore('reminders', () => {
         load()
     })
 
-    watch(state.map, () => {
+    watch(state, () => {
         save()
     }, {
         deep: true
