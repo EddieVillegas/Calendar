@@ -62,13 +62,15 @@ const weatherErrorByReminder = reactive<Record<string, string>>({})
 
 const friendlyDate = computed(() => {
   const [y, m, d] = date.split('-').map(Number)
-  const dt = new Date(y, m - 1, d)
-  return dt.toLocaleDateString('en-us', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  if(y && m && d) {
+    const dt = new Date(y, m - 1, d)
+    return dt.toLocaleDateString('en-us', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
 })
 
 const loadWeatherForReminder = async (reminder: Reminder) => {

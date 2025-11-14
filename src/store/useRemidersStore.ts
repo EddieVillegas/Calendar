@@ -89,10 +89,7 @@ export const useReminderStore = defineStore('reminders', () => {
         return `${y}-${mm}-${dd}`;
     }
 
-    const openModal = (
-        time?: string, 
-        reminder?: Reminder
-    ) => {
+    const openModal = () => {
         open.value = true
     }
     

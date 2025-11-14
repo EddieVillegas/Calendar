@@ -19,7 +19,7 @@ export async function useLoadWeatherForCity(
     if (!resultCity) {
       weatherError.value = 'No se pudo obtener el clima para esta ciudad.'
     }
-    const resultWather = await fetchWeatherByLatLon(resultCity[0]?.lat, resultCity[0]?.lon)
+    const resultWather = resultCity && await fetchWeatherByLatLon(resultCity[0]?.lat, resultCity[0]?.lon)
     if(!resultWather){
       weatherError.value = 'No se pudo obtener el clima para esta ciudad.'
     }
