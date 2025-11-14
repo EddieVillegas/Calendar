@@ -11,7 +11,7 @@
 </script>
 
 <template>
-  <section class="calendar" aria-label="Calendario mensual">
+  <section class="calendar" aria-label="Month Calendar">
     <Header />
     <WeekDays :week-days="weekDays"/>
     <Days :is-today="store.isToday" :last-day="store.lastDay"/>

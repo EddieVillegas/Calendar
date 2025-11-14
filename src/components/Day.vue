@@ -55,7 +55,6 @@
   .day:hover{
     background: var(--select);
   }
-
   .day {
     font: 600 .95rem/1.1 Inter, ui-sans-serif, system-ui;
   }

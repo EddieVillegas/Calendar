@@ -58,6 +58,16 @@ export const useReminderStore = defineStore('reminders', () => {
         state.map[newReminder.date]?.push({...newReminder, id })
     }
 
+    const removeRinder = (
+        id: string,
+        date: string,
+    ) => {
+        state.map[date] ||= []
+        const next = state.map[date].filter(r => r.id !== id)
+        if (next.length) state.map[date] = next
+        else delete state.map[date]
+    }
+
     const isToday = (
         d: number
     ) => {
@@ -111,6 +121,7 @@ export const useReminderStore = defineStore('reminders', () => {
         prevMonth,
         openModal,
         closeModal,
+        removeRinder,
         saveReminder,
         reminders: state,
     }

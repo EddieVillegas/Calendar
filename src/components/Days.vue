@@ -1,5 +1,5 @@
 <template>
-    <ol class="days" :style="{'--start': 6}">
+    <ol class="days">
         <Day
           v-for="day in lastDay"
           :day="day"

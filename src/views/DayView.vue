@@ -30,7 +30,7 @@
 
         <div class="actions">
           <button title="Guardar cambios">Guardar</button>
-          <button class="danger" title="Eliminar">Eliminar</button>
+          <button class="danger" title="Eliminar" @click="removeRinder(r.id, r.date)">Eliminar</button>
         </div>
       </li>
 
@@ -48,7 +48,7 @@ import type { Reminder, Reminders, Weather } from '../types'
 import { useLoadWeatherForCity } from '../composables/useLoadWeatherForCity'
 
 const KELVIN = 273.15
-const { list } = useReminderStore()
+const { list, removeRinder } = useReminderStore()
 
 type Props = {
   day: string
