@@ -1,5 +1,52 @@
-# Vue 3 + TypeScript + Vite
+# Vue Calendar Reminders App
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A modern, feature-rich calendar application built with Vue 3, Vue Router, and Vite.
+Users can browse monthly views, open a specific day, and manage their reminders.
+Each reminder includes:
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+The app displays local weather for each reminder, based on its city, using a cached API call system to minimize requests.
+
+## Technologies Used
+
+- Vue 3 (Composition API)
+
+- Vue Router
+
+- Vite
+
+- OpenWeather API
+
+- LocalStorage for persistent reminders
+
+- TypeScript
+
+## Configuration
+Create .env.local and add BASE URL and an OpenWeather API key.
+
+```env
+VITE_BASE_URL=https://api.openweathermap.org/data/2.5
+VITE_OPENWEATHER_KEY=YOUR_OPENWEATHER_API_KEY
+```
+
+Important:
+All Vite environment variables must start with VITE_ to be accessible in the frontend.
+
+Restart the dev server after editing .env.local.
+
+## Running the Project
+### Install
+```bash
+npm install
+```
+### Start development server
+```bash
+npm run dev
+```
+The app will be available at:
+```
+http://localhost:5173
+```
+### Build for production
+```bash
+npm run build
+```
