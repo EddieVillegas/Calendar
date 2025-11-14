@@ -9,15 +9,11 @@ The app displays local weather for each reminder, based on its city, using a cac
 ## Technologies Used
 
 - Vue 3 (Composition API)
-
 - Vue Router
-
+- Pinia
 - Vite
-
 - OpenWeather API
-
 - LocalStorage for persistent reminders
-
 - TypeScript
 
 ## Configuration
